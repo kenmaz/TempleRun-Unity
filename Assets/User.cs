@@ -19,13 +19,14 @@ public class User : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
- 
 		this.processKeyInput();
 		this.processTouchInput();
 
 		this.move();
 		this.updateElapsedTimeLabel();
 		this.speedUp();
+
+		this.checkFail ();
 	}
 
 	// touch
@@ -76,7 +77,7 @@ public class User : MonoBehaviour
 
 	private void move()
 	{
-		this.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, runDirection, 0), 0.1f);
+		this.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, runDirection, 0), 0.25f);
 
 		Vector3 v = transform.forward * this.runSpeed;
 		v.y = this.rigidbody.velocity.y;
@@ -95,5 +96,14 @@ public class User : MonoBehaviour
 		int sec = (int)now;
 		float mil = (now - (float)sec) * 100.0f;
 		this.elapseTimeGUIText.text = string.Format("{0:00}:{1:00}", sec, mil);
+	}
+
+	private void checkFail() {
+		if (transform.position.y < -10) {
+			transform.position = new Vector3(0, 5, 0);
+			transform.rotation = Quaternion.identity;
+			this.runDirection = 0;
+			this.runSpeed = this.defaultRunSpeed;
+		}
 	}
 }
