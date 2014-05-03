@@ -104,6 +104,10 @@ public class User : MonoBehaviour
 			transform.rotation = Quaternion.identity;
 			this.runDirection = 0;
 			this.runSpeed = this.defaultRunSpeed;
+
+			GameObject obj = GameObject.Find("GroundControl");
+			GroundControl con = obj.GetComponent("GroundControl") as GroundControl;
+			con.resetGame();
 		}
 	}
 }
