@@ -19,6 +19,7 @@ public class Test : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+		return;
 		if (Input.GetKeyDown(KeyCode.UpArrow)) {
 			Debug.Log("up");
 			this.addUp(KeyCode.UpArrow);

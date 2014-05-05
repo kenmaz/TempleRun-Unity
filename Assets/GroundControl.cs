@@ -20,6 +20,8 @@ public class GroundControl : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
+		Application.targetFrameRate = 60;
+
 		this.defaultGroundList = new List<GameObject>();
 		this.defaultGroundPosList = new List<Vector3>();
 		this.grounds = new LinkedList<GameObject>();
