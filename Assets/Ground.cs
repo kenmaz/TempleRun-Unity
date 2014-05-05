@@ -3,10 +3,11 @@ using System.Collections;
 
 public class Ground : MonoBehaviour {
 
-	public GameObject groundControl;
+	private GameObject groundControl;
 
 	// Use this for initialization
 	void Start () {
+		this.groundControl = GameObject.Find("GroundControl");
 	}
 	
 	// Update is called once per frame
@@ -16,7 +17,7 @@ public class Ground : MonoBehaviour {
 		Vector3 pos = Camera.main.WorldToViewportPoint(this.transform.position);	
 		if (pos.z < 0) {
 			GroundControl con = groundControl.GetComponent<GroundControl>();
-			con.recycle(this.gameObject);
+			con.recycle();
 		}
 	}
 

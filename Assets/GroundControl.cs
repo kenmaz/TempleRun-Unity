@@ -1,36 +1,44 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
+enum Route: int
+{
+	Unknown = 0,
+	Straight = 1,
+	Left = 2,
+	Right = 3
+}
+
 public class GroundControl : MonoBehaviour
 {
+	private List<GameObject> defaultGroundList;
+	private List<Vector3> defaultGroundPosList;
 
-	public GameObject ground1;
-	public GameObject ground2;
-	public GameObject ground3;
-	public GameObject user;
 	private LinkedList<GameObject> grounds;
-	private Vector3 orgPos1, orgPos2, orgPos3;
+	private Route next;
 
 	// Use this for initialization
 	void Start()
 	{
+		this.defaultGroundList = new List<GameObject>();
+		this.defaultGroundPosList = new List<Vector3>();
 		this.grounds = new LinkedList<GameObject>();
-		this.grounds.AddLast(this.ground1);
-		this.grounds.AddLast(this.ground2);
-		this.grounds.AddLast(this.ground3);
-		this.orgPos1 = this.ground1.transform.position;
-		this.orgPos2 = this.ground2.transform.position;
-		this.orgPos3 = this.ground3.transform.position;
+
+		for (int i = 1; i <= 4; i++) {
+			GameObject ground = GameObject.Find("Ground" + i);
+			defaultGroundList.Add(ground);
+			defaultGroundPosList.Add(ground.transform.position);
+			grounds.AddLast(ground);
+		}
 	}
 
-	public void resetGame() {
-		this.ground1.transform.position = this.orgPos1;
-		this.ground1.transform.rotation = Quaternion.identity;
-		this.ground2.transform.position = this.orgPos2;
-		this.ground2.transform.rotation = Quaternion.identity;
-		this.ground3.transform.position = this.orgPos3;
-		this.ground3.transform.rotation = Quaternion.identity;
-		this.grounds = new LinkedList<GameObject>();
+	public void resetGame()
+	{
+		for (int i = 0; i < this.defaultGroundList.Count; i++) {
+			GameObject ground = this.defaultGroundList[i];
+			ground.transform.position = this.defaultGroundPosList[i];
+			ground.transform.rotation = Quaternion.identity;
+		}
 		Start();
 	}
 
@@ -39,25 +47,43 @@ public class GroundControl : MonoBehaviour
 	{
 	}
 
-	public void recycle(GameObject targetGround) {
-		Debug.Log(string.Format("recycle:{0}", targetGround));
-
-		GameObject tailGround = this.grounds.Last.Value;
-
-		this.grounds.Remove(targetGround);
-		this.grounds.AddLast(targetGround);
-
-		targetGround.transform.rotation = tailGround.transform.rotation;
+	public void recycle()
+	{
+		GameObject first = this.grounds.First.Value;
+		GameObject last = this.grounds.Last.Value;
+		this.grounds.Remove(first);
+		this.grounds.AddLast(first);
+		Debug.Log(first);
 		
-		// add straigh
-		Vector3 pos = tailGround.transform.position;
-		pos.z += tailGround.transform.localScale.z;
-		targetGround.transform.position = pos;
+		first.transform.rotation = last.transform.rotation;
 		
-		Vector3 rotatePoint = new Vector3(pos.x,
-		                                  pos.y,
-		                                  pos.z - (targetGround.transform.localScale.z / 2) + (targetGround.transform.localScale.x / 2));
-		targetGround.transform.RotateAround(rotatePoint, Vector3.up, 90);
+		float rotateAdjust = first.transform.localScale.z / 2 - first.transform.localScale.x / 2;
+
+		if (next == Route.Unknown) {
+			next = (Route)Random.Range(1, 4);
+		} 
+
+		switch (next) {
+			case Route.Straight:
+				first.transform.position = last.transform.position;
+				first.transform.Translate(0, 0, last.transform.localScale.z);
+				next = Route.Unknown;
+				break;
+			case Route.Left:
+				first.transform.position = last.transform.position;
+				first.transform.Rotate(Vector3.up, -90.0f);
+				first.transform.Translate(rotateAdjust, 0, rotateAdjust);
+				next = Route.Straight;
+				break;
+			case Route.Right:
+				first.transform.position = last.transform.position;
+				first.transform.Rotate(Vector3.up, 90.0f);
+				first.transform.Translate(-1 * rotateAdjust, 0, rotateAdjust);
+				next = Route.Straight;
+				break;
+			default:
+				break;
+		}
 	}
 
 }
