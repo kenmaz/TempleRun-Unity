@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using UnityEngine.UI;
 public class User : MonoBehaviour
 {
 	public float defaultRunSpeed = 7.0f;
 	public float speedUpRate = 1.0f;
-	public GUIText elapseTimeGUIText;
+	public Text elapseTimeGUIText;
 	private float runSpeed;
 	private	int runDirection;
 
@@ -80,8 +80,8 @@ public class User : MonoBehaviour
 		this.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, runDirection, 0), 0.25f);
 
 		Vector3 v = transform.forward * this.runSpeed;
-		v.y = this.rigidbody.velocity.y;
-		this.rigidbody.velocity = v;
+		v.y = this.GetComponent<Rigidbody>().velocity.y;
+		this.GetComponent<Rigidbody>().velocity = v;
 	}
 
 	private void speedUp()
